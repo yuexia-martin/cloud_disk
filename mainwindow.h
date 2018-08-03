@@ -15,8 +15,16 @@
 #include <QJsonArray>
 #include <QJsonArray>
 #include <QJsonParseError>
+#include <QObject>
+#include <QFileDialog>
+#include <QCryptographicHash>
+#include <QFile>
+
+
+
 
 #include "tools.h"
+#include "main_disk.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,9 +37,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-//    void mousePressEvent(QMouseEvent *event);
 
     ~MainWindow();
+
+
+private:
+
+
+
+
 
 private slots:
     void on_exit_btn_clicked();
@@ -51,12 +65,16 @@ private slots:
 
     void on_login_btn_clicked();
 
+    void window_change();
+
 private:
     Ui::MainWindow *ui;
 
-    QString ip;
 
+    QString host;
+    QString ip;
     QString port;
+
 
     //请求管理
     QNetworkAccessManager * net_manger;

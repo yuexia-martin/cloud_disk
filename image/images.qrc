@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/images">
         <file>images/balckButton.png</file>
+        <file>images/back_img.jpg</file>
         <file>images/display_bk.bmp</file>
         <file>images/login_bk.jpg</file>
         <file>images/login_close.png</file>
@@ -27,6 +28,5 @@
         <file>images/top2.png</file>
         <file>images/top3.png</file>
         <file>images/upload.png</file>
-        <file>images/back_img.jpg</file>
     </qresource>
 </RCC>

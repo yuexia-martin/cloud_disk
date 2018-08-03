@@ -1,27 +1,48 @@
 #include "tools.h"
-#include <stdlib.h>
 
-using namespace std;
-//const int SIZE_CHAR = 32; //生成32 + 1位C Style字符串
-//const char CCH[] = "_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
-//int main()
-//{
-//    srand((unsigned)time(NULL));
-//   char ch[SIZE_CHAR + 1] = {0};
-//   for (int i = 0; i < SIZE_CHAR; ++i)
-//   {
-//         //int x = rand() % (sizeof(CCH) - 1); //这个方法不好, 因为许多随机数发生器的低位比特并不随机,
+QByteArray getFileMd5(QString filePath)
+{
+    QFile localFile(filePath);
 
-////RAND MAX 在ANSI 里#define 在<stdlib.h>
+    if (!localFile.open(QFile::ReadOnly))
+    {
+        qDebug() << "file open error.";
+        return 0;
+    }
 
-////RAND MAX 是个常数, 它告诉你C 库函数rand() 的固定范围。
+    QCryptographicHash ch(QCryptographicHash::Md5);
 
-////不可以设RAND MAX 为其它的值, 也没有办法要求rand() 返回其它范围的值。
+    quint64 totalBytes = 0;
+    quint64 bytesWritten = 0;
+    quint64 bytesToWrite = 0;
+    quint64 loadSize = 1024 * 4;
+    QByteArray buf;
 
-//       int x = rand() / (RAND_MAX / (sizeof(CCH) - 1));
+    totalBytes = localFile.size();
+    bytesToWrite = totalBytes;
 
-//         ch[i] = CCH[x];
-//   }
-//   cout <<ch <<"\n";
-//    return 0;
-//}
+    while (1)
+    {
+        if (bytesToWrite > 0)
+        {
+            buf = localFile.read(qMin(bytesToWrite, loadSize));
+            ch.addData(buf);
+            bytesWritten += buf.length();
+            bytesToWrite -= buf.length();
+            buf.resize(0);
+        }
+        else
+        {
+            break;
+        }
+
+        if (bytesWritten == totalBytes)
+        {
+            break;
+        }
+    }
+
+    localFile.close();
+    QByteArray md5 = ch.result();
+    return md5;
+}

@@ -5,6 +5,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+
+
     ui->setupUi(this);
 
     //去除边框
@@ -27,12 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-//void MainWindow::mousePressEvent(QMouseEvent *event)
-//{
-////     this->windowPos = this->pos();                // 获得部件当前位置
-////     this->mousePos = event->globalPos();     // 获得鼠标位置
-////     this->dPos = mousePos - windowPos;       // 移动后部件所在的位置
-//}
+
 
 MainWindow::~MainWindow()
 {
@@ -297,13 +295,14 @@ void MainWindow::on_login_btn_clicked()
 
                      this->token=rootObj.value("token").toString();
 
-                     if(1==status)
+                     if(1 == status)
                      {
 
-                          qDebug()<<"登录成功"<<endl;
+                        qDebug()<<"登录成功"<<endl;
 
-                         qDebug()<<"token:"<<this->token<<endl;
+                        qDebug()<<"token:"<<this->token<<endl;
 
+                        this->window_change();
 
                      }else{
                          QMessageBox::about(this,"失败",msg);
@@ -321,5 +320,20 @@ void MainWindow::on_login_btn_clicked()
 
              });
 
+}
+
+void MainWindow::window_change()
+{
+
+      main_disk  * disk_window = new main_disk;
+
+
+      disk_window->show();
+
+      this->hide();
 
 }
+
+
+
+

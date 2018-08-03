@@ -1,14 +1,19 @@
-#include "disk_main.h"
-#include "ui_disk_main.h"
+#include "mainwindow.h"
+#include <QApplication>
 
-disk_main::disk_main(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::disk_main)
-{
-    ui->setupUi(this);
-}
 
-disk_main::~disk_main()
+
+
+
+int main(int argc, char *argv[])
 {
-    delete ui;
+    QApplication a(argc, argv);
+    MainWindow w;
+
+
+
+
+    w.show();
+
+    return a.exec();
 }
