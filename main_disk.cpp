@@ -54,7 +54,7 @@ void main_disk::on_upload_btn_clicked()
         if(1 == ret){
             QMessageBox::information(this,"秒传成功","秒传成功");
         }else{
-                return;
+
             //没法进行秒传 发送post包上传
 
             do{
@@ -68,6 +68,8 @@ void main_disk::on_upload_btn_clicked()
                  //打开要上传的文件
                  QFile file(filename);
 
+                 QFileInfo fi(filename);
+
                  if(!file.open(QIODevice::ReadOnly) || file.size()==0)
                  {
                      file.close();
@@ -77,9 +79,11 @@ void main_disk::on_upload_btn_clicked()
 
 
 
+
+
                   QByteArray post_data;
 
-                  post_data.append("-----------------------------18410170095896\r\nContent-Disposition: form-data; name=\"file\"; filename=\"a8.txt\"\r\nContent-Type: text/plain\r\n\r\n");
+                  post_data.append(QString("-----------------------------18410170095896\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%1\"\r\nContent-Type: text/plain\r\n\r\n").arg(fi.fileName()));
 
                   //把文件读到要发送的包里面去
                   post_data.append(file.readAll());
@@ -196,7 +200,7 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
 
 
        //    绑定请求结束事件
-           connect(rep,&QNetworkReply::finished,[&](){
+           connect(rep,&QNetworkReply::finished,[=](){
 
                qDebug()<<"111"<<endl;
 
@@ -206,7 +210,6 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
 
                     rep->deleteLater();
 
-                    ret = 0;
                     return;
                }
 
@@ -245,14 +248,14 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
 
                       qDebug()<<"秒传"<<endl;
 
-                      ret=1;
+//                      ret=1;
 
 
                    }else{
 
                        qDebug()<<"该文件无法进行秒传"<<endl;
 
-                      ret=0;
+//                      ret=0;
                    }
 
 
