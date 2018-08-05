@@ -293,14 +293,14 @@ void MainWindow::on_login_btn_clicked()
 
                      QString msg=rootObj.value("msg").toString();
 
-                     this->token=rootObj.value("token").toString();
+                     this->config->token=rootObj.value("token").toString().toLatin1();
 
                      if(1 == status)
                      {
 
                         qDebug()<<"登录成功"<<endl;
 
-                        qDebug()<<"token:"<<this->token<<endl;
+                        qDebug()<<"token:"<<this->config->token<<endl;
 
                         this->window_change();
 
@@ -327,12 +327,19 @@ void MainWindow::window_change()
 
       main_disk  * disk_window = new main_disk;
 
+       disk_window->set_config(this->config);
 
       disk_window->show();
 
-      this->hide();
+      this->close();
 
 }
+
+ void MainWindow::set_config(Config *temp_config){
+
+    this->config=temp_config;
+
+ }
 
 
 

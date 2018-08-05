@@ -14,6 +14,8 @@ main_disk::main_disk(QWidget *parent) :
     this->net_manger=new QNetworkAccessManager;
 
 
+
+
     //去除边框
     this->setWindowFlags(Qt::FramelessWindowHint);
 }
@@ -37,6 +39,7 @@ void main_disk::on_upload_btn_clicked()
 
     QString filename = QFileDialog::getOpenFileName(this,"选择您要上传的文件",QDir::currentPath(),"All files(*.*)");
 
+    //循环 多选
 
     if(!filename.isNull()){
 
@@ -49,113 +52,9 @@ void main_disk::on_upload_btn_clicked()
 
         //发送http请求,判断文件是否可以秒传
 
-        ret = this->check_file_md5(filename,file_md5_string);
-
-        if(1 == ret){
-            QMessageBox::information(this,"秒传成功","秒传成功");
-        }else{
-
-            //没法进行秒传 发送post包上传
-
-            do{
-
-                QNetworkRequest request(QUrl(QString("%1%2%3").arg("http://").arg("192.168.58.133").arg("/upload")));
-
-                 //设置数据传输方式(post)
-                 request.setRawHeader("Content-Type","multipart/form-data;boundary=---------------------------18410170095896");
+        this->check_file_md5(filename,file_md5_string);
 
 
-                 //打开要上传的文件
-                 QFile file(filename);
-
-                 QFileInfo fi(filename);
-
-                 if(!file.open(QIODevice::ReadOnly) || file.size()==0)
-                 {
-                     file.close();
-                     break;
-                 }
-
-
-
-
-
-
-                  QByteArray post_data;
-
-                  post_data.append(QString("-----------------------------18410170095896\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%1\"\r\nContent-Type: text/plain\r\n\r\n").arg(fi.fileName()));
-
-                  //把文件读到要发送的包里面去
-                  post_data.append(file.readAll());
-
-
-
-                  post_data.append("\r\n-----------------------------18410170095896--\r\n");
-
-                   //请求
-                   QNetworkReply * rep=this->net_manger->post(request,post_data);
-
-                   file.close();
-
-
-
-                   //    绑定请求结束事件
-                       connect(rep,&QNetworkReply::finished,[=](){
-
-                           if(rep->error()!=QNetworkReply::NoError){
-
-                               rep->deleteLater();
-
-                               return ;
-                           }
-
-                           QByteArray byte_arr=rep->readAll();
-
-                           //判断字符串转化为QJsonDocument  是否出现了错误
-                          QJsonParseError jsonError;//Qt5新类
-                          QJsonDocument json = QJsonDocument::fromJson(byte_arr, &jsonError);//Qt5新类
-                          if (jsonError.error == QJsonParseError::NoError)
-                          {
-
-
-                              qDebug()<<"返回格式正确"<<endl;
-
-                               QJsonObject rootObj = json.object();
-
-
-                               qint8 status=rootObj.value("status").toInt();
-
-                               QString msg=rootObj.value("msg").toString();
-
-
-                               if(1 == status)
-                               {
-
-                                  qDebug()<<"上传成功"<<endl;
-
-                               }else{
-
-                                   qDebug()<<"上传失败"<<endl;
-
-                               }
-
-
-                          }else{
-
-
-
-                              qDebug()<<"返回json格式错误"<<endl;
-
-                          }
-
-                          rep->deleteLater();
-
-
-                       });
-
-            }while(0);
-
-        }
 
 
     }
@@ -163,7 +62,7 @@ void main_disk::on_upload_btn_clicked()
 }
 
 
-int main_disk::check_file_md5(QString filename,QString file_md5_string)
+void  main_disk::check_file_md5(QString filename,QString file_md5_string)
 {
 
     int ret=0;
@@ -173,7 +72,11 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
 
      //设置数据传输方式(post)
      request.setRawHeader("Content-Type","application/json");
-//     request.setRawHeader("token",(this->token));
+
+     request.setRawHeader("token",this->config->token);
+
+
+//      qDebug()<<"check_md5"<<this->config->token<<endl;
 
        //定义json对象
        QJsonObject json;
@@ -208,7 +111,7 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
 
                     qDebug()<<"秒传对比md5请求错误"<<endl;
 
-                    rep->deleteLater();
+//                    rep->deleteLater();
 
                     return;
                }
@@ -246,16 +149,18 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
                    if(1 == status)
                    {
 
-                      qDebug()<<"秒传"<<endl;
+                      qDebug()<<"秒传成功"<<endl;
 
-//                      ret=1;
+                      QMessageBox::information(this,"秒传成功","秒传成功");
+
 
 
                    }else{
 
                        qDebug()<<"该文件无法进行秒传"<<endl;
 
-//                      ret=0;
+                       //调用文件上传方法 进行文件上传
+                       this->upload_file(filename);
                    }
 
 
@@ -273,7 +178,130 @@ int main_disk::check_file_md5(QString filename,QString file_md5_string)
 
            });
 
-           return ret;
+
 
 }
 
+void main_disk::set_config(Config *temp_config){
+
+   this->config=temp_config;
+
+}
+
+
+//切换用户按钮
+void main_disk::on_change_user_clicked()
+{
+
+    MainWindow *mainwindow=new MainWindow;
+
+    mainwindow->show();
+
+    this->close();
+
+
+}
+
+
+//文件上传
+void main_disk::upload_file(QString filename){
+
+    do{
+
+        QNetworkRequest request(QUrl(QString("%1%2%3").arg("http://").arg("192.168.58.133").arg("/upload")));
+
+         //设置数据传输方式(post)
+         request.setRawHeader("Content-Type","multipart/form-data;boundary=---------------------------18410170095896");
+         request.setRawHeader("token",this->config->token);
+
+         //打开要上传的文件
+         QFile file(filename);
+
+         QFileInfo fi(filename);
+
+         if(!file.open(QIODevice::ReadOnly) || file.size()==0)
+         {
+             file.close();
+             break;
+         }
+
+
+
+
+
+
+          QByteArray post_data;
+
+          post_data.append(QString("-----------------------------18410170095896\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%1\"\r\nContent-Type: text/plain\r\n\r\n").arg(fi.fileName()));
+
+          //把文件读到要发送的包里面去
+          post_data.append(file.readAll());
+
+
+
+          post_data.append("\r\n-----------------------------18410170095896--\r\n");
+
+           //请求
+           QNetworkReply * rep=this->net_manger->post(request,post_data);
+
+           file.close();
+
+
+
+           //    绑定请求结束事件
+               connect(rep,&QNetworkReply::finished,[=](){
+
+                   if(rep->error()!=QNetworkReply::NoError){
+
+                       rep->deleteLater();
+
+                       return ;
+                   }
+
+                   QByteArray byte_arr=rep->readAll();
+
+                   //判断字符串转化为QJsonDocument  是否出现了错误
+                  QJsonParseError jsonError;//Qt5新类
+                  QJsonDocument json = QJsonDocument::fromJson(byte_arr, &jsonError);//Qt5新类
+                  if (jsonError.error == QJsonParseError::NoError)
+                  {
+
+
+                      qDebug()<<"返回格式正确"<<endl;
+
+                       QJsonObject rootObj = json.object();
+
+
+                       qint8 status=rootObj.value("status").toInt();
+
+                       QString msg=rootObj.value("msg").toString();
+
+
+                       if(1 == status)
+                       {
+
+                          qDebug()<<"上传成功"<<endl;
+
+                       }else{
+
+                           qDebug()<<"上传失败"<<endl;
+
+                       }
+
+
+                  }else{
+
+
+
+                      qDebug()<<"返回json格式错误"<<endl;
+
+                  }
+
+                  rep->deleteLater();
+
+
+               });
+
+    }while(0);
+
+}

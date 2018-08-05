@@ -231,7 +231,7 @@
       <enum>Qt::ToolButtonTextUnderIcon</enum>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton_9">
+    <widget class="QToolButton" name="change_user">
      <property name="geometry">
       <rect>
        <x>490</x>

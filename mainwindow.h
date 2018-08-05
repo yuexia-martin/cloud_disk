@@ -22,7 +22,7 @@
 
 
 
-
+#include "config.h"
 #include "tools.h"
 #include "main_disk.h"
 
@@ -39,6 +39,8 @@ public:
 
 
     ~MainWindow();
+
+    void set_config(Config *temp_config);
 
 
 private:
@@ -74,6 +76,8 @@ private:
     QString host;
     QString ip;
     QString port;
+
+    Config *config;
 
 
     //请求管理
