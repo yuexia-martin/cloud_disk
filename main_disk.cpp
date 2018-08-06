@@ -315,7 +315,7 @@ void main_disk::upload_file(QString filename){
 void main_disk::on_my_files_clicked()
 {
     //定义要访问的url地址
-    QNetworkRequest request(QUrl(QString("%1%2").arg(this->config->url).arg("/file_list")));
+    QNetworkRequest request(QUrl(QString("%1%2").arg(this->config->url).arg("/myfiles")));
     //鉴权
     request.setRawHeader("token",this->config->token);
 
