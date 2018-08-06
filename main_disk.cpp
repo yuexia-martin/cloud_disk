@@ -15,6 +15,20 @@ main_disk::main_disk(QWidget *parent) :
 
 
 
+    //设置QListWidget的显示模式
+    ui->listWidget->setViewMode(QListView::IconMode);
+    //设置QListWidget中单元项的图片大小
+    ui->listWidget->setIconSize(QSize(100,100));
+
+    //设置QListWidget中单元项的间距
+    ui->listWidget->setSpacing(10);
+
+    //设置自适应
+    ui->listWidget->setResizeMode(QListWidget::Adjust);
+
+    //设置不能移动
+    ui->listWidget->setMovement(QListWidget::Static);
+
 
     //去除边框
     this->setWindowFlags(Qt::FramelessWindowHint);
@@ -327,7 +341,40 @@ void main_disk::on_my_files_clicked()
 
       connect(rep,&QNetworkReply::finished,[=](){
 
-        qDebug()<<"okok"<<endl;
+           //判断是否请求错误
+          if(rep->error()!=QNetworkReply::NoError){
+
+              qDebug()<<"发送请求错误"<<endl;
+              rep->deleteLater();
+
+              return ;
+          }
+
+           QByteArray byte_arr=rep->readAll();
+
+           QString result=byte_arr;
+
+          //判断json解析是否正确
+          QJsonParseError jsonError;//Qt5新类
+          QJsonDocument json = QJsonDocument::fromJson(byte_arr, &jsonError);//Qt5新类
+          if (jsonError.error == QJsonParseError::NoError)
+          {
+
+              qDebug().noquote()<<result;
+
+              //刷新文件列表
+              this->flush_table(byte_arr);
+
+
+
+          }else
+          {
+               qDebug()<<"JSON解析错误"<<endl;
+               rep->deleteLater();
+          }
+
+
+
       });
 
 
@@ -335,7 +382,20 @@ void main_disk::on_my_files_clicked()
     qDebug()<<"获取完成"<<endl;
 }
 
+ void main_disk::flush_table(QByteArray result){
 
+
+            //定义QListWidgetItem对象
+             QListWidgetItem *imageItem = new QListWidgetItem;
+             //为单元项设置属性
+             imageItem->setIcon(QIcon(":/ico/fileIcon/bmp.png"));
+             imageItem->setText(tr("Browse"));
+             //重新设置单元项图片的宽度和高度
+             imageItem->setSizeHint(QSize(100,120));
+             //将单元项添加到QListWidget中
+             ui->listWidget->addItem(imageItem);
+
+ }
 
 
 

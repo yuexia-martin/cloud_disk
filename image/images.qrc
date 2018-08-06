@@ -29,4 +29,53 @@
         <file>images/top3.png</file>
         <file>images/upload.png</file>
     </qresource>
+    <qresource prefix="/ico">
+        <file>fileIcon/accdb.png</file>
+        <file>fileIcon/avi.png</file>
+        <file>fileIcon/bmp.png</file>
+        <file>fileIcon/css.png</file>
+        <file>fileIcon/docx.png</file>
+        <file>fileIcon/docx_mac.png</file>
+        <file>fileIcon/eml.png</file>
+        <file>fileIcon/eps.png</file>
+        <file>fileIcon/fla.png</file>
+        <file>fileIcon/gif.png</file>
+        <file>fileIcon/gz.png</file>
+        <file>fileIcon/html.png</file>
+        <file>fileIcon/ind.png</file>
+        <file>fileIcon/ini.png</file>
+        <file>fileIcon/jpeg.png</file>
+        <file>fileIcon/jpg.png</file>
+        <file>fileIcon/jsf.png</file>
+        <file>fileIcon/midi.png</file>
+        <file>fileIcon/mov.png</file>
+        <file>fileIcon/mp3.png</file>
+        <file>fileIcon/mp4.png</file>
+        <file>fileIcon/mpeg.png</file>
+        <file>fileIcon/null.png</file>
+        <file>fileIcon/other.png</file>
+        <file>fileIcon/pdf.png</file>
+        <file>fileIcon/png.png</file>
+        <file>fileIcon/pptx_mac.png</file>
+        <file>fileIcon/pptx_win.png</file>
+        <file>fileIcon/proj.png</file>
+        <file>fileIcon/psd.png</file>
+        <file>fileIcon/pst.png</file>
+        <file>fileIcon/pub.png</file>
+        <file>fileIcon/rar.png</file>
+        <file>fileIcon/readme.png</file>
+        <file>fileIcon/settings.png</file>
+        <file>fileIcon/tar.png</file>
+        <file>fileIcon/test.jpg</file>
+        <file>fileIcon/text.png</file>
+        <file>fileIcon/tiff.png</file>
+        <file>fileIcon/url.png</file>
+        <file>fileIcon/vsd.png</file>
+        <file>fileIcon/wav.png</file>
+        <file>fileIcon/wma.png</file>
+        <file>fileIcon/wmv.png</file>
+        <file>fileIcon/xlsx.png</file>
+        <file>fileIcon/xlsx_mac.png</file>
+        <file>fileIcon/zip.png</file>
+    </qresource>
 </RCC>

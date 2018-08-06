@@ -31,6 +31,8 @@ private:
 
     void upload_file(QString filename);
 
+    void flush_table(QByteArray result);
+
 
 private slots:
     void on_toolButton_clicked();
