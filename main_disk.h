@@ -41,6 +41,10 @@ private slots:
 
     void on_change_user_clicked();
 
+
+
+    void on_my_files_clicked();
+
 private:
     Ui::main_disk *ui;
 

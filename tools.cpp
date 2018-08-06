@@ -46,3 +46,8 @@ QByteArray getFileMd5(QString filePath)
     QByteArray md5 = ch.result();
     return md5;
 }
+
+
+
+
+

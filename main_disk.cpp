@@ -155,9 +155,14 @@ void  main_disk::check_file_md5(QString filename,QString file_md5_string)
 
 
 
-                   }else{
+                   }else if(2 == status){
 
-                       qDebug()<<"该文件无法进行秒传"<<endl;
+                        QMessageBox::information(this,"文件已存在","该文件已存在,不能上传重复文件");
+
+                   }
+                   else{
+
+                       qDebug()<<"该文件无法进行秒传 status:"<<status<<endl;
 
                        //调用文件上传方法 进行文件上传
                        this->upload_file(filename);
@@ -206,6 +211,8 @@ void main_disk::on_change_user_clicked()
 //文件上传
 void main_disk::upload_file(QString filename){
 
+    qDebug()<<"进入文件上传函数"<<endl;
+
     do{
 
         QNetworkRequest request(QUrl(QString("%1%2%3").arg("http://").arg("192.168.58.133").arg("/upload")));
@@ -224,10 +231,6 @@ void main_disk::upload_file(QString filename){
              file.close();
              break;
          }
-
-
-
-
 
 
           QByteArray post_data;
@@ -281,6 +284,7 @@ void main_disk::upload_file(QString filename){
                        {
 
                           qDebug()<<"上传成功"<<endl;
+                          QMessageBox::information(this,"文件上传成功","文件上传成功");
 
                        }else{
 
@@ -305,3 +309,30 @@ void main_disk::upload_file(QString filename){
     }while(0);
 
 }
+
+
+//刷新文件列表
+void main_disk::on_my_files_clicked()
+{
+    //定义要访问的url地址
+    QNetworkRequest request(QUrl(QString("%1%2").arg(this->config->url).arg("/file_list")));
+    //鉴权
+    request.setRawHeader("token",this->config->token);
+
+    QNetworkReply * rep=this->net_manger->get(request);
+
+      connect(rep,&QNetworkReply::finished,[=](){
+
+        qDebug()<<"okok"<<endl;
+      });
+
+
+
+    qDebug()<<"获取完成"<<endl;
+}
+
+
+
+
+
+

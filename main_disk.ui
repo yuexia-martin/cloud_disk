@@ -91,7 +91,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QToolButton" name="toolButton_5">
+    <widget class="QToolButton" name="my_files">
      <property name="geometry">
       <rect>
        <x>120</x>

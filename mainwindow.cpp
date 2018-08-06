@@ -22,6 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //获取服务器端口
     this->port=ui->host_port->text();
 
+
+
+
     //初始化请求管理器
 
     this->net_manger=new QNetworkAccessManager;
@@ -239,6 +242,10 @@ void MainWindow::on_reg_btn_clicked()
 //登录功能
 void MainWindow::on_login_btn_clicked()
 {
+
+        this->config->url=QString("%1%2").arg("http://").arg(ui->host_ip->text());
+
+
       QNetworkRequest request(QUrl(QString("%1%2%3").arg("http://").arg(ui->host_ip->text()).arg("/login")));
 
        //设置数据传输方式(post)

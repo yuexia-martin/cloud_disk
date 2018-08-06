@@ -20,7 +20,11 @@
 #include <QCryptographicHash>
 #include <QFile>
 
-
+#include <future>
+#include <thread>
+#include <vector>
+#include <algorithm>
+#include <cassert>
 
 #include "config.h"
 #include "tools.h"

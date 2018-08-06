@@ -6,6 +6,7 @@ class Config {
 
 public:
     QByteArray token;
+    QString url;
 
 public:
     void clear();

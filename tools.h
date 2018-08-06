@@ -6,8 +6,10 @@
 #include <QCryptographicHash>
 #include <QFile>
 #include <QDebug>
+#include "mainwindow.h"
 
 
 QByteArray getFileMd5(QString filePath);
+
 
 #endif // TOOLS_H
