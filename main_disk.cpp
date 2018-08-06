@@ -319,7 +319,11 @@ void main_disk::on_my_files_clicked()
     //鉴权
     request.setRawHeader("token",this->config->token);
 
-    QNetworkReply * rep=this->net_manger->get(request);
+    QByteArray post_data;
+
+    post_data.append("{\"action\": \"get_list\"}\n");
+
+    QNetworkReply * rep=this->net_manger->post(request,post_data);
 
       connect(rep,&QNetworkReply::finished,[=](){
 
