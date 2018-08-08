@@ -48,6 +48,27 @@ QByteArray getFileMd5(QString filePath)
 }
 
 
+// 获取文件图标
+HICON fileIcon(std::string extention)
+{
+    HICON icon = NULL;
+    if (extention.length() > 0)
+    {
+        LPCSTR name = extention.c_str();
+
+        SHFILEINFOA info;
+        if (SHGetFileInfoA(name,
+            FILE_ATTRIBUTE_NORMAL,
+            &info,
+            sizeof(info),
+            SHGFI_SYSICONINDEX | SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))
+        {
+            icon = info.hIcon;
+        }
+    }
+
+    return icon;
+}
 
 
 

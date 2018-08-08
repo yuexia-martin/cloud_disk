@@ -14,6 +14,19 @@ main_disk::main_disk(QWidget *parent) :
     this->net_manger=new QNetworkAccessManager;
 
 
+    //绑定上传按钮被点击事件 由于整个是点击在listwidget上的,所以信号的发送者是listwidget
+     connect(ui->listWidget,&QListWidget::itemClicked,[=](QListWidgetItem * item){
+            qDebug()<<item->text()<<endl;
+
+            if(item->text()=="上传"){
+
+                 this->upload_btn();
+            }
+
+
+     });
+
+
 
     //设置QListWidget的显示模式
     ui->listWidget->setViewMode(QListView::IconMode);
@@ -32,6 +45,7 @@ main_disk::main_disk(QWidget *parent) :
 
     //去除边框
     this->setWindowFlags(Qt::FramelessWindowHint);
+
 }
 
 main_disk::~main_disk()
@@ -46,7 +60,7 @@ void main_disk::on_toolButton_clicked()
 
 
 //文件上传按钮被点击
-void main_disk::on_upload_btn_clicked()
+void main_disk::upload_btn()
 {
 
     int ret =0;
@@ -75,7 +89,7 @@ void main_disk::on_upload_btn_clicked()
 
 }
 
-
+//校验md5
 void  main_disk::check_file_md5(QString filename,QString file_md5_string)
 {
 
@@ -166,6 +180,8 @@ void  main_disk::check_file_md5(QString filename,QString file_md5_string)
                       qDebug()<<"秒传成功"<<endl;
 
                       QMessageBox::information(this,"秒传成功","秒传成功");
+
+                      this->on_my_files_clicked();
 
 
 
@@ -299,6 +315,7 @@ void main_disk::upload_file(QString filename){
 
                           qDebug()<<"上传成功"<<endl;
                           QMessageBox::information(this,"文件上传成功","文件上传成功");
+                          this->on_my_files_clicked();
 
                        }else{
 
@@ -354,16 +371,19 @@ void main_disk::on_my_files_clicked()
 
            QString result=byte_arr;
 
-          //判断json解析是否正确
+           //这里的QJsonDocument::fromJson 函数 是从一个二进制对象获取一个json对象，
+           //第二个参数jsonError 是获取解析的结果
           QJsonParseError jsonError;//Qt5新类
-          QJsonDocument json = QJsonDocument::fromJson(byte_arr, &jsonError);//Qt5新类
+          QJsonDocument json = QJsonDocument::fromJson(byte_arr, &jsonError);
+
+          //解析的结果.error 如果 == noerror 就是说 没有问题
           if (jsonError.error == QJsonParseError::NoError)
           {
 
               qDebug().noquote()<<result;
 
               //刷新文件列表
-              this->flush_table(byte_arr);
+              this->flush_table(json);
 
 
 
@@ -382,21 +402,113 @@ void main_disk::on_my_files_clicked()
     qDebug()<<"获取完成"<<endl;
 }
 
- void main_disk::flush_table(QByteArray result){
+ void main_disk::flush_table( QJsonDocument json){
+
+     //先清空之前的
+     ui->listWidget->clear();
+
+    //添加上传按钮
+    this->add_upload_btn();
 
 
-            //定义QListWidgetItem对象
-             QListWidgetItem *imageItem = new QListWidgetItem;
-             //为单元项设置属性
-             imageItem->setIcon(QIcon(":/ico/fileIcon/bmp.png"));
-             imageItem->setText(tr("Browse"));
-             //重新设置单元项图片的宽度和高度
-             imageItem->setSizeHint(QSize(100,120));
-             //将单元项添加到QListWidget中
-             ui->listWidget->addItem(imageItem);
+
+
+     //数组长度
+     int array_length=0;
+
+     //二维数组长度
+     int array_value_length=0;
+
+
+     if(json.isArray()){
+
+
+         qDebug()<<"是一个数组"<<endl;
+
+         //把json对象转换为一个数组
+         QJsonArray array= json.array();
+
+         //获取数组长度
+         array_length = array.size();
+
+          qDebug()<<"一维数组长度:"<<array_length<<endl;
+
+         for(int i=0;i<array_length;++i){
+
+             //定义二级json array
+
+             //定义一个json对象
+             QJsonObject array_value=array.at(i).toObject();
+
+
+             //从json对象中取出file_id
+
+             QJsonValue id = array_value.value("id");
+             QJsonValue uid = array_value.value("uid");
+             QJsonValue file_id = array_value.value("file_id");
+             QJsonValue filename = array_value.value("filename");
+             QJsonValue createtime = array_value.value("createtime");
+             QJsonValue shared_status = array_value.value("shared_status");
+             QJsonValue pv = array_value.value("pv");
+             QJsonValue md5 = array_value.value("md5");
+             QJsonValue size = array_value.value("size");
+             QJsonValue type = array_value.value("type");
+             QJsonValue count = array_value.value("count");
+
+
+
+
+          //定义QListWidgetItem对象
+          QListWidgetItem *imageItem = new QListWidgetItem;
+
+          //从扩展名获取windows图标
+          HICON this_icon=fileIcon(QString(".%1").arg(type.toString()).toStdString());
+
+          //把获取的windows图标句柄转换成qt能用的QPixmap
+          QPixmap ico_img=QtWin::fromHICON(this_icon);
+
+
+
+          imageItem->setIcon(QIcon(ico_img));
+
+
+          imageItem->setText(filename.toString());
+
+
+          //重新设置单元项图片的宽度和高度
+          imageItem->setSizeHint(QSize(100,100));
+
+
+          //将单元项添加到QListWidget中
+          ui->listWidget->addItem(imageItem);
+
+
+         }
+
+
+     }else{
+
+        qDebug()<<"不是一个数组"<<endl;
+     }
+
+
+
 
  }
 
 
+ //添加上传按钮
+ void main_disk::add_upload_btn(){
+
+     QListWidgetItem * upload_btn=new QListWidgetItem;
+
+    upload_btn->setIcon(QIcon(":/images/images/upload.png"));
+
+    upload_btn->setText(tr("上传"));
+
+    ui->listWidget->addItem(upload_btn);
+
+
+ }
 
 

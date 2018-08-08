@@ -19,12 +19,26 @@
 #include <QFileDialog>
 #include <QCryptographicHash>
 #include <QFile>
+#include <QPixmap>
 
 #include <future>
 #include <thread>
 #include <vector>
 #include <algorithm>
 #include <cassert>
+
+#include <QFileDialog>
+#include <QMenu>
+#include <QWidget>
+#include <QtWin>
+#include <QIcon>
+#include <QFileIconProvider>
+#include <QTemporaryFile>
+
+#include <windows.h>
+#include <iostream>
+
+//#include <QWe
 
 #include "config.h"
 #include "tools.h"

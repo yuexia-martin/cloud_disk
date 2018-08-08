@@ -31,13 +31,17 @@ private:
 
     void upload_file(QString filename);
 
-    void flush_table(QByteArray result);
+    void flush_table(QJsonDocument json);
+
+    void add_upload_btn();
 
 
 private slots:
     void on_toolButton_clicked();
 
-    void on_upload_btn_clicked();
+//    void on_upload_btn_clicked();
+
+    void upload_btn();
 
 
 

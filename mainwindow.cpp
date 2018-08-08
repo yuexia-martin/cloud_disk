@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
+
     //初始化请求管理器
 
     this->net_manger=new QNetworkAccessManager;

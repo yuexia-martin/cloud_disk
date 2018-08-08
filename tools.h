@@ -11,5 +11,6 @@
 
 QByteArray getFileMd5(QString filePath);
 
+HICON fileIcon(std::string extention);
 
 #endif // TOOLS_H
